@@ -1,0 +1,13 @@
+{% extends "base.jinja2"%}
+
+{% if width %}
+    {% block titleExtension %}{%endblock%}
+    {% block stylesheets %}
+    {% endblock %}
+{% endif %}
+{%block endScripts%}
+
+{% endblock %}
+{% block body %}
+    Welcome Home!
+{% endblock %}
