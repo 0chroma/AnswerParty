@@ -34,7 +34,7 @@ def make_room(request):
     
 def join_room(request):
     params = request.params
-    
+
     if not 'name' in params:
         print "No Name"
         resp = Response("Must specify name",status='500')
@@ -57,4 +57,15 @@ def join_room(request):
         room = roomlist[0]
     #TODO: Make sure name is unique
     rooms.update({'_id':room['_id']},{'$inc':{'usrCount':1},'$push':{'inRoom':name,'allUsrs':name}})
+    
+    session = request.session
+    session['name'] = name
+    session['room_id'] = room['_id']
+    session.save()
+    
     return {'question':room['question'],'name':params['name']}
+    
+def update(request):
+    session = request.session
+    print session['name']
+    return {'nothing':None}
