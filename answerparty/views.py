@@ -108,7 +108,7 @@ def submit_word(request):
         return NotFound()
     
     nextUser = room['inRoom'][1]
-    room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$push':{'inRoom':currUser},'$set':{'answer':sentence,'lastUser':currUser,'currUser':nextUser}})
+    rooms.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$push':{'inRoom':currUser},'$set':{'answer':sentence,'lastUser':currUser,'currUser':nextUser}})
     return {}
 
 def leave(request):
@@ -125,7 +125,7 @@ def leave(request):
     leaveUser = session['name']
     if(currUser == leaveUser):
         nextUser = room['inRoom'][1]
-        room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$set':{'currUser':nextUser},'$inc':{'usrCount':-1}})    
+        rooms.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$set':{'currUser':nextUser},'$inc':{'usrCount':-1}})    
     room_id = session['room_id']
     del session['name']
     del session['room_id']
