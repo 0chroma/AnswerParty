@@ -29,11 +29,12 @@ define("party/widget/AnswerInput", ["dojo", "party", "dijit/_Widget", "dijit/_Te
                 url: "/submitWord",
                 handleAs: "json",
                 content: {
-                    word: "asdf"
+                    word: this.inputFieldNode.value
                 },
                 load: dojo.hitch(this, function(){
                     this.hideInput();
                     this.inputFieldNode.disabled = false;
+                    this.inputFieldNode.value = "";
                 }),
                 error: function(){
                     alert("Problem sending your word, sorry!");

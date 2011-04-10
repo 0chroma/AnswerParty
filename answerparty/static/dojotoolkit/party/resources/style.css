@@ -20,3 +20,7 @@ ul.partyRoomStatus li {
 ul.partyRoomStatus li.active {
     font-weight: bold;
 }
+
+.answerLabel {
+    font-weight: bold;
+}
