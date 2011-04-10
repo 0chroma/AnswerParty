@@ -49,11 +49,12 @@ def join_room(request):
     if 'room' in params:
         room = rooms.find_one({'_id':params['room']})
     if room == None:
-        room = rooms.find({'active':True,'usrCount':{'$lt':MAX_IN_ROOM}}).sort('usrCount').limit(1)[0]
-    if room == None:
+        roomlist = rooms.find({'active':True,'usrCount':{'$lt':MAX_IN_ROOM}}).sort('usrCount').limit(1)
+    if roomlist.count() < 1:
         room_id = make_room(request)['room_id']
         room = rooms.find_one({'_id':room_id})
+    else:
+        room = roomlist[0]
     #TODO: Make sure name is unique
     rooms.update({'_id':room['_id']},{'$inc':{'usrCount':1},'$push':{'inRoom':name,'allUsrs':name}})
     return {'question':room['question'],'name':params['name']}
-        
