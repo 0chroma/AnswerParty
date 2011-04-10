@@ -1,4 +1,8 @@
 import random
+from pymongo import ASCENDING
+from pymongo import DESCENDING
+from pyramid.exceptions import ExceptionResponse
+from pyramid.response import Response
 
 questions = ['How do I cut bread?',
              'What age should I teach my kid to shoot a gun?',
@@ -25,20 +29,31 @@ def make_room(request):
                   'lastUsr':"",
                   'active':True
     });
-    #rooms.ensure_index([{'active':1},{'usrCount':-1}])
+    rooms.ensure_index([('active',ASCENDING),('usrCount',DESCENDING)])
     return {'question':question,'room_id':room_id}
     
 def join_room(request):
     params = request.params
-    return {'question':random.choice(questions),'name':params['name']}
-    #name = params['name']
-    #
-    #db = request.db
-    #rooms = db.rooms
-    #
-    #room = None
-    #if 'room' in params:
-    #    room = rooms.find_one({'_id':params['room']})
-    #if room == None:
-    #    room = rooms.find_one({'active':True,'usrCount':{'$lt':MAX_IN_ROOM}},sort={})
-    #    
+    
+    if not 'name' in params:
+        print "No Name"
+        resp = Response("Must specify name",status='500')
+        return resp;
+        
+    name = params['name']
+    
+    db = request.db
+    rooms = db.rooms
+    
+    room = None
+    if 'room' in params:
+        room = rooms.find_one({'_id':params['room']})
+    if room == None:
+        room = rooms.find({'active':True,'usrCount':{'$lt':MAX_IN_ROOM}}).sort('usrCount').limit(1)[0]
+    if room == None:
+        room_id = make_room(request)['room_id']
+        room = rooms.find_one({'_id':room_id})
+    #TODO: Make sure name is unique
+    rooms.update({'_id':room['_id']},{'$inc':{'usrCount':1},'$push':{'inRoom':name,'allUsrs':name}})
+    return {'question':room['question'],'name':params['name']}
+        
