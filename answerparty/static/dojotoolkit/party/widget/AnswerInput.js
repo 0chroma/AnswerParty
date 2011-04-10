@@ -2,16 +2,23 @@ define("party/widget/AnswerInput", ["dojo", "party", "dijit/_Widget", "dijit/_Te
 
     dojo.declare("party.widget.AnswerInput", [dijit._Widget, dijit._Templated], {
         templateString: dojo.cache("party.widget", "templates/AnswerInput.html"),
+        sentence: "",
+        inputShown: false,
         _stopSpace: function(e){
             if(dojo.keys.SPACE == e.keyCode){
                 dojo.stopEvent(e);
             }
         },
+        _setSentenceAttr: function(value){
+            this.sentenceNode.innerHTML=value;
+        },
         showInput: function(){
+            this.inputShown=true;
             dojo.style(this.inputNode, "display", "inline");
             this.inputFieldNode.focus();
         },
         hideInput: function(){
+            this.inputShown=false;
             dojo.style(this.inputNode, "display", "none");
         },
         sendWord: function(e){
