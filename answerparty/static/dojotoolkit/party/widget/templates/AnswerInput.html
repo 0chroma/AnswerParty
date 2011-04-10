@@ -1,0 +1,9 @@
+<div class="partyAnswerInput">
+    <span dojoAttachPoint="sentenceNode"></span>
+    <span dojoAttachPoint="inputNode" style="display: none;">
+        <form dojoAttachEvent="onsubmit:sendWord" style="display: inline;">
+            <input dojoAttachPoint="inputFieldNode" tabIndex="-1" dojoAttachEvent="onkeydown:_stopSpace" type="text" />
+            <input type="submit" value="Submit" />
+        </form>
+    </span>
+</div>
