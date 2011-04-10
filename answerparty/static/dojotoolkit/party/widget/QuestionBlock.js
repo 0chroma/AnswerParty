@@ -17,14 +17,13 @@ define("party/widget/QuestionBlock", ["dojo", "party", "dijit/_Widget", "dijit/_
             dojo.xhrPost({
                 url: "/join",
                 handleAs: "json",
-                data: {
+                content: {
                     name: this._name
                 },
-                context: this,
-                load: function(result){
+                load: dojo.hitch(this, function(result){
                     this._name = result.name;
                     this.attr("question", result.question);
-                },
+                }),
                 error: function(){
                     alert("There was a problem getting a question, sorry!");
                 }
