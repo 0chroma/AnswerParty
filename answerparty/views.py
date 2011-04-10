@@ -21,7 +21,6 @@ def make_room(request):
     room_id = counts.find_one({'_id':'room_id'})['count']    
     rooms.insert({'_id':room_id,
                   'question':question,
-                  'sentence':sentence,
                   'inRoom':[],
                   'usrCount':0,
                   'allUsrs':[],
@@ -81,7 +80,7 @@ def update(request):
     currUser = room['currUsr']
     lastUser = room['lastUsr']
     userList = room['inRoom']
-    sentence = room['sentence']
+    sentence = room['answer']
     isMyTurn = len(userList)<2 or (currUser == session['name'])
     
     return ({'isMyTurn':isMyTurn,
@@ -99,11 +98,11 @@ def submit_word(request):
         return NotFound()
     room = rooms.find_one({'_id':session['room_id']})
     currUser = room['currUsr']
-    sentence = room['sentence']
+    sentence = room['answer']
     sentence += word+" "
     if len(room['inRoom']) < 2:
         return NotFound()
     
     nextUser = room['inRoom'][1]
-    room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$push':{'inRoom':currUser},'$set':{'sentence':sentence,'lastUser':currUser,'currUser':nextUser}})
+    room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$push':{'inRoom':currUser},'$set':{'answer':sentence,'lastUser':currUser,'currUser':nextUser}})
     return {}
