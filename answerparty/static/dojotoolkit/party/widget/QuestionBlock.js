@@ -36,7 +36,8 @@ define("party/widget/QuestionBlock", ["dojo", "party", "dijit/_Widget", "dijit/_
             dojo.style(this.nameFormNode, "display", "block");
             dojo.style(this.displayNode, "display", "none");
         },
-        getNameInput: function(){
+        getNameInput: function(e){
+            dojo.stopEvent(e);
             this._name = this.nameFieldNode.value;
             dojo.style(this.nameFormNode, "display", "none");
             dojo.style(this.displayNode, "display", "block");

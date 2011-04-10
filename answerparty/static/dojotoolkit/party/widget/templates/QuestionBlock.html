@@ -4,7 +4,9 @@
     </div>
     <div dojoAttachPoint="nameFormNode" style="display: none;">
         Enter your name:
-        <input type="text" dojoAttachPoint="nameFieldNode" />
-        <input type="button" value="Go!" dojoAttachEvent="onclick:getNameInput" />
+        <form dojoAttachEvent="onsubmit:getNameInput">
+            <input type="text" dojoAttachPoint="nameFieldNode" />
+            <input type="submit" value="Go!" />
+        </form>
     </div>
 </div>
