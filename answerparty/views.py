@@ -78,6 +78,8 @@ def update(request):
     
     room = rooms.find_one({'_id':session['room_id']})
     currUser = room['currUsr']
+    if currUser == '':
+        currUser = room['inRoom'][0]
     lastUser = room['lastUsr']
     userList = room['inRoom']
     sentence = room['answer']
@@ -98,11 +100,30 @@ def submit_word(request):
         return NotFound()
     room = rooms.find_one({'_id':session['room_id']})
     currUser = room['currUsr']
+    if currUser == '':
+        currUser = room['inRoom'][0]
     sentence = room['answer']
-    sentence += word+" "
+    sentence += params[word]+" "
     if len(room['inRoom']) < 2:
         return NotFound()
     
     nextUser = room['inRoom'][1]
     room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$push':{'inRoom':currUser},'$set':{'answer':sentence,'lastUser':currUser,'currUser':nextUser}})
     return {}
+
+def leave(request):
+    session = request.session
+    params = request.params
+    db = request.db
+    rooms = db.rooms
+    
+    if not 'room_id' in session:
+        return NotFound()
+    room = rooms.find_one({'_id':session['room_id']})
+    
+    leaveUser = session['name']
+    room_id = session['room_id']
+    del session['name']
+    del session['room_id']
+    
+    room.update({'_id':room_id},{'$pull':{'inRoom':leaveUser},'$inc':{'usrCount':-1}})
