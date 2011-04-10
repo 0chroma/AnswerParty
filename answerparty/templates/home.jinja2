@@ -1,13 +1,18 @@
 {% extends "base.jinja2"%}
 
-{% if width %}
-    {% block titleExtension %}{%endblock%}
-    {% block stylesheets %}
-    {% endblock %}
-{% endif %}
-{%block endScripts%}
-
+{% block titleExtension %} - Answer random questions!  {%endblock%}
+{% block stylesheets %}
+<link href="{{request.static_url('answerparty:static/dojotoolkit/party/resources/style.css')}}" rel="stylesheet" type="text/css" />
+<link href="{{request.static_url('answerparty:static/dojotoolkit/dojo/resources/dojo.css')}}" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{{request.static_url('answerparty:static/dojotoolkit/dojo/dojo.js')}}" djConfig="parseOnLoad: true"></script>
+<script type="text/javascript">
+    dojo.require("party.party");
+</script>
 {% endblock %}
+
 {% block body %}
-    Welcome Home!
+    <h1 class="header">Answer Party!</h1>
+    <div data-dojo-type="party.widget.QuestionBlock" id="questionBlock" question="Welcome to AnswerParty!"></div>
+    <div data-dojo-type="party.widget.RoomStatus" id="roomStatus"></div>
+    <div data-dojo-type="party.widget.AnswerInput" id="answerInput"></div>
 {% endblock %}
