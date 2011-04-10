@@ -1,7 +1,7 @@
 import random
 from pymongo import ASCENDING
 from pymongo import DESCENDING
-from pyramid.exceptions import ExceptionResponse
+from pyramid.exceptions import NotFound
 from pyramid.response import Response
 
 questions = ['How do I cut bread?',
@@ -56,7 +56,10 @@ def join_room(request):
     else:
         room = roomlist[0]
     #TODO: Make sure name is unique
-    rooms.update({'_id':room['_id']},{'$inc':{'usrCount':1},'$push':{'inRoom':name,'allUsrs':name}})
+    if len(room['inRoom']) == 0:
+        rooms.update({'_id':room['_id']},{'$inc':{'usrCount':1},'$push':{'inRoom':name,'allUsrs':name},'$set':{'currUsr':name}})
+    else:
+        rooms.update({'_id':room['_id']},{'$inc':{'usrCount':1},'$push':{'inRoom':name,'allUsrs':name}})
     
     session = request.session
     session['name'] = name
@@ -67,5 +70,39 @@ def join_room(request):
     
 def update(request):
     session = request.session
-    print session['name']
-    return {'nothing':None}
+    db = request.db
+    rooms = db.rooms
+    
+    if not 'room_id' in session:
+        return NotFound()
+    
+    room = rooms.find_one({'_id':session['room_id']})
+    currUser = room['currUsr']
+    lastUser = room['lastUsr']
+    userList = room['inRoom']
+    sentence = room['answer']
+    isMyTurn = len(userList)<2 or (currUser == session['name'])
+    
+    return ({'isMyTurn':isMyTurn,
+             'userList':userList,
+             'sentence':sentence,
+             'currUser':currUser,
+             'lastUser':lastUser})
+def submit_word(request):
+    session = request.session
+    params = request.params
+    db = request.db
+    rooms = db.rooms
+    
+    if not 'room_id' in session or not 'word' in params:
+        return NotFound()
+    room = rooms.find_one({'_id':session['room_id']})
+    currUser = room['currUsr']
+    sentence = room['answer']
+    sentence += word+" "
+    if len(room['inRoom']) < 2:
+        return NotFound()
+    
+    nextUser = room['inRoom'][1]
+    room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$push':{'inRoom':currUser},'$set':{'answer':sentence,'lastUser':currUser,'currUser':nextUser}})
+    return {}

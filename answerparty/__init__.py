@@ -19,6 +19,7 @@ def main(global_config, **settings):
     config.add_route('makeRoom','/makeRoom',view='answerparty.views.make_room',renderer='json')
     config.add_route('joinRoom','/join',view='answerparty.views.join_room',renderer='json')
     config.add_route('update','/update',view='answerparty.views.update',renderer='json')
+    config.add_route('submitWord','/submitWord',view='answerparty.views.submit_word',renderer='json')
     config.add_static_view('static', 'answerparty:static')
     return config.make_wsgi_app()
 
