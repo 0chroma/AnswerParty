@@ -11,10 +11,11 @@ def main(global_config, **settings):
     config.include('pyramid_jinja2')
     config.add_jinja2_search_path('answerparty:templates')
     
-    config.add_view('answerparty.views.my_view',
+    config.add_view('answerparty.views.home',
                     context='answerparty:resources.Root',
                     renderer='answerparty:templates/home.jinja2')
-    
+    config.add_route('makeRoom','/makeRoom',view='answerparty.views.make_room',renderer='json')
+    config.add_route('joinRoom','/join',view='answerparty.views.join_room',renderer='json')
     config.add_static_view('static', 'answerparty:static')
     return config.make_wsgi_app()
 

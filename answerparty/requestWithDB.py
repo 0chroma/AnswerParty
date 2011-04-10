@@ -8,7 +8,7 @@ class RequestWithDB(Request):
     @reify
     def db(self):
         connection = Connection('localhost',27017)
-        return connection['lemon']
+        return connection['ap']
     #@reify
     #def gridFS(self):
     #    return gridfs.GridFS(self.db, self.registry['gridFS_collection'])
