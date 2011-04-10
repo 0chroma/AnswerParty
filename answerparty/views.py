@@ -7,7 +7,7 @@ from pyramid.response import Response
 questions = ['How do I cut bread?',
              'What age should I teach my kid to shoot a gun?',
              'How many stars are there?']
-MAX_IN_ROOM = 8
+MAX_IN_ROOM = 4
 def home(request):
     return {}
 
@@ -103,7 +103,7 @@ def submit_word(request):
     if currUser == '':
         currUser = room['inRoom'][0]
     sentence = room['answer']
-    sentence += params[word]+" "
+    sentence += params['word']+" "
     if len(room['inRoom']) < 2:
         return NotFound()
     
@@ -121,7 +121,11 @@ def leave(request):
         return NotFound()
     room = rooms.find_one({'_id':session['room_id']})
     
+    currUser = room['currUsr']
     leaveUser = session['name']
+    if(currUser == leaveUser):
+        nextUser = room['inRoom'][1]
+        room.update({'_id':room['_id']},{'$pop':{'inRoom':-1},'$set':{'currUser':nextUser},'$inc':{'usrCount':-1}})    
     room_id = session['room_id']
     del session['name']
     del session['room_id']
